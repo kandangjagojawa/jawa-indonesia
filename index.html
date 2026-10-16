@@ -1,32 +1,44 @@
----
-layout: default
-title: Transliterasi Aksara Jawa Bahasa Indonesia
----
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transliterasi Aksara Jawa Bahasa Indonesia</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-<div class="app-container">
-    <div class="petunjuk-box">
-        <h3>📌 Petunjuk Penulisan Vokal E:</h3>
-        <ul>
-            <li>Gunakan <strong>e</strong> untuk <em>e pepet</em> (contoh: emas, engkau, kerbau).</li>
-            <li>Gunakan <strong>e'</strong>, <strong>é</strong>, atau <strong>è</strong> untuk <em>e taling</em> (contoh: ke'cap, e'nak, e'mbe'r, pe'nde'k).</li>
-            <li><em>Catatan: Kata e-taling umum bahasa Indonesia akan dikoreksi otomatis oleh sistem jika Anda lupa mengetik tanda petik (e').</em></li>
-        </ul>
-    </div>
+    <div class="container">
+        <h1>Transliterasi Aksara Jawa Bahasa Indonesia</h1>
 
-    <div class="input-section">
-        <label for="inputLatin">Ketik Teks Latin / Bahasa Indonesia:</label>
-        <textarea id="inputLatin" placeholder="Ketik kalimat di sini... (contoh: Saya sekolah di SMA Negeri 8 Yogyakarta dan makan kecap.)"></textarea>
-    </div>
-
-    <div class="output-section">
-        <div class="output-header">
-            <label>Hasil Aksara Jawa:</label>
-            <button id="btnSalin" onclick="salinAksara()">📋 Salin Aksara</button>
+        <!-- Petunjuk Penulisan -->
+        <div class="petunjuk-box">
+            <h3>📌 Petunjuk Penulisan Vokal E:</h3>
+            <ul>
+                <li>Gunakan <strong>e</strong> untuk <em>e pepet</em> (contoh: emas, engkau, kerbau).</li>
+                <li>Gunakan <strong>e'</strong>, <strong>é</strong>, atau <strong>è</strong> untuk <em>e taling</em> (contoh: ke'cap, e'nak, e'mbe'r, pe'nde'k).</li>
+                <li><em>Catatan: Kata e-taling umum bahasa Indonesia akan dikoreksi otomatis oleh sistem jika Anda lupa mengetik tanda petik (e').</em></li>
+            </ul>
         </div>
-        <div id="outputJawa" class="box-aksara">-</div>
-    </div>
-</div>
 
-<link rel="stylesheet" href="{{ '/assets/css/style.scss' | relative_url }}">
-<script src="{{ '/jawaindo.js' | relative_url }}"></script>
-<script src="{{ '/app.js' | relative_url }}"></script>
+        <!-- Area Input Latin -->
+        <div class="input-section">
+            <label for="inputLatin">Ketik Teks Latin / Bahasa Indonesia:</label>
+            <textarea id="inputLatin" placeholder="Ketik kalimat di sini... (contoh: Saya sekolah di SMA Negeri 8 Yogyakarta dan makan kecap.)"></textarea>
+        </div>
+
+        <!-- Area Output Aksara Jawa -->
+        <div class="output-section">
+            <div class="output-header">
+                <label>Hasil Aksara Jawa:</label>
+                <button id="btnSalin" onclick="salinAksara()">📋 Salin Aksara</button>
+            </div>
+            <div id="outputJawa" class="box-aksara">-</div>
+        </div>
+    </div>
+
+    <!-- Pemuatan Script -->
+    <script src="jawaindo.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
