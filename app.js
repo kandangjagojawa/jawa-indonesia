@@ -4,13 +4,14 @@ let isKamusLoaded = false;
 // Memuat kamustaling.json secara asinkron
 async function muatKamusTaling() {
     try {
-        const response = await fetch('kamustaling.json');
+        // Path relatif './' memastikan berkas dibaca dari root direktori aplikasi
+        const response = await fetch('./kamustaling.json');
         if (response.ok) {
             KAMUS_TALING = await response.json();
             isKamusLoaded = true;
         }
     } catch (err) {
-        console.warn('Gagal memuat kamustaling.json, transliterasi menggunakan mode standar:', err);
+        console.warn('Gagal memuat kamustaling.json:', err);
     }
 }
 
