@@ -1,15 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Javanese:wght@400;700&display=swap');
 
-/* ====================================================
-   1. SEMBUNYIKAN VIEW ON GITHUB & FOOTER (MODERNIST)
-   ==================================================== */
+@import "jekyll-theme-modernist";
 
-/* Sembunyikan tombol View on GitHub / Downloads */
+/* 1. Sembunyikan pita "View on GitHub" di pojok kanan atas */
+#forkme_banner {
+    display: none !important;
+}
+
+/* 2. Sembunyikan tombol "View the Project on GitHub" / Downloads */
 #downloads {
     display: none !important;
 }
 
-/* Sembunyikan seluruh area footer di bagian bawah */
+/* 3. Sembunyikan seluruh footer di bagian bawah */
 #footer_wrap {
     display: none !important;
 }
