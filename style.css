@@ -44,15 +44,32 @@ textarea {
     border-radius: 8px;
     word-break: break-word;
 }
-/*
-.page-header {
-    display: none;
+
+/* ====================================================
+   KUSTOMISASI CSS UNTUK JEKULL-THEME-MODERNIST
+   ==================================================== */
+
+/* 1. Menyembunyikan SELURUH header atas (termasuk judul, deskripsi, dan tombol)
+#header_wrap {
+    display: none !important;
 } */
 
-.page-header .btn {
-    display: none;
+/* 2. ATAU Hanya menyembunyikan tombol "View on GitHub" / Download saja */
+#downloads {
+    display: none !important;
 }
 
-.site-footer {
-    display: none;
+/* 3. ATAU Hanya menyembunyikan subjudul/deskripsi di header
+#project_tagline {
+    display: none !important;
+} *?
+
+/* 4. Menyembunyikan SELURUH footer bagian bawah */
+#footer_wrap {
+    display: none !important;
 }
+
+/* 5. Merapikan jarak atas konten utama jika header disembunyikan
+#main_content_wrap {
+    padding-top: 20px !important;
+} */
