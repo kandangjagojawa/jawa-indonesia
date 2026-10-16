@@ -1,6 +1,6 @@
 title: Transliterasi Aksara Jawa
 description: Aplikasi Transliterasi Aksara Jawa Khusus Bahasa Indonesia
-theme: jekyll-theme-cayman # Pilihan tema populer: jekyll-theme-cayman, jekyll-theme-modernist, jekyll-theme-minimal
+theme: jekyll-theme-modernist # Pilihan tema populer: jekyll-theme-cayman, jekyll-theme-modernist, jekyll-theme-minimal
 
 # Memastikan berkas JSON dan JS penting diikutkan dalam proses build Jekyll
 include:
