@@ -13,7 +13,7 @@
  *    tanpa dobel konsonan dan tanpa Pangkon (mangan-e -> ꦩꦔꦤ꺺).
  * 5. Tembung Dwilingga Mandiri -> Kata ulang ber-tanda hubung diproses terpisah (alun-alun -> ꦄꦭꦸꦤ꧀ꦄꦭꦸꦤ꧀).
  * 6. Ater-ater Anuswara Literal -> Ditulis murni sesuai ketikan tanpa penyisipan Aksara Ha di depan (ngombe -> ꦔꦺꦴꦩ꧀ꦧꦺ).
- * 7. Huruf Kapital & Murda -> Huruf kapital tidak otomatis memicu aksara Murda. Aksara Murda diakses via konsonan ganda (nn, kkx, tt, ss, pp, gg, bb, cc, nyy, jj, rr).
+ * 7. Huruf Kapital & Murda -> Huruf kapital tidak otomatis memicu aksara Murda. Aksara Murda diakses via konsonan ganda (nnx, kkx, tt, ss, pp, gg, bb, cc, nyy, jj, rr).
  * 8. Penulisan Huruf D Bahasa Indonesia -> Memakai U+A99D (ꦝ). Aksara Da (ꦢ / U+A9A2) diakses via 'dx'.
  * 9. Dukungan Singkatan Otomatis -> Deteksi kata kapital [A-Z]{2,} & sintaks «...», dikonversi ke ejaan bunyi ber-Pada Lingsa (꧈) dan terisolasi dari pangkon kata sebelumnya via \u200C.
  */
@@ -29,7 +29,7 @@ const KAMUS_AKSARA = {
     'kx':'ꦏ', 'rx':'ꦫ', 'hx':'ꦲ', 'ngx':'ꦔ', 'dx':'ꦢ',
     'q': 'ꦐ', 'hh': 'ꦲ꦳', 'xng': 'ꦔ꦳', 'ts': 'ꦱ꦳', 'shh': 'ꦰ꦳',
     'xsy': 'ꦯ꦳', 'dl': 'ꦭ꦳', 'tth': 'ꦡ꦳', 'zh': 'ꦣ꦳', 'x': 'ꦑ꦳',
-    'nn':'ꦟ', 'kkx':'ꦑ', 'tt':'ꦡ', 'ss':'ꦯ', 'pp':'ꦦ',
+    'nnx':'ꦟ', 'kkx':'ꦑ', 'tt':'ꦡ', 'ss':'ꦯ', 'pp':'ꦦ',
     'gg':'ꦓ', 'bb':'ꦨ', 'cc':'ꦖ', 'nyy':'ꦘ', 'jj':'ꦙ', 'rr':'ꦬ'
 };
 
@@ -333,8 +333,9 @@ function transliterasiSingleKata(rawLatin) {
         .replace(/\[[a-zA-ZéèêÉÈÊ]+\*([a-zA-ZéèêÉÈÊ]+)\]/gi, '$1')
         .replace(/[\~!\#\^]/g, '');
 
-    // Penyederhanaan ganda 'kk' (misal: meletakkan -> meletakan) agar tidak menghasilkan dobel 'kk' atau Aksara Murda Ka
+    // Penyederhanaan ganda akibat imbuhan/akhiran (misal: meletakkan -> meletakan, lainnya -> lainya, sarannya -> saranya)
     latinProcessed = latinProcessed.replace(/kk(?!x)/gi, 'k');
+    latinProcessed = latinProcessed.replace(/nn(?!x)/gi, 'n');
 
     let isKataNingrat = latinProcessed.toLowerCase().includes('ningrat');
 
@@ -431,9 +432,9 @@ function transliterasiSingleKata(rawLatin) {
         else if (SWARA_MAP[c2_upper] && c2_raw === c2_upper && ['AA', 'II', 'UU', 'AI', 'AU'].includes(c2_upper)) {
             c = c2_upper; isSwara = true; jump = 2;
         } 
-        else if (['ngx', 'xng', 'shh', 'xsy', 'tth', 'nyy', 'kkx'].includes(c3)) {
+        else if (['ngx', 'xng', 'shh', 'xsy', 'tth', 'nyy', 'kkx', 'nnx'].includes(c3)) {
             c = c3; jump = 3;
-        } else if (['ng','ny','dh','th','nx','kh','dz','gh','kx','rx','hx','ngx','dx','sy','sh','hh','ts','dl','zh','nn','tt','ss','pp','gg','bb','cc','jj','rr'].includes(c2)) {
+        } else if (['ng','ny','dh','th','nx','kh','dz','gh','kx','rx','hx','ngx','dx','sy','sh','hh','ts','dl','zh','tt','ss','pp','gg','bb','cc','jj','rr'].includes(c2)) {
             c = c2; jump = 2;
         } else if (KAMUS_AKSARA[c1]) {
             c = c1; jump = 1;
