@@ -158,6 +158,30 @@ function salinAksara() {
     });
 }
 
+// Fungsi Pengaturan Tampilan Output (Font, Ukuran Font, dan Jarak Baris)
+function ubahFontRadio(fontVal) {
+    const outJawa = document.getElementById('outputJawa');
+    if (outJawa) {
+        outJawa.style.fontFamily = fontVal === 'Ngayogyan' ? "'Ngayogyan', 'Noto Sans Javanese', serif" : "'Noto Sans Javanese', 'Ngayogyan', serif";
+    }
+}
+
+function ubahUkuranFont() {
+    const slider = document.getElementById('fontSizeSlider');
+    const outJawa = document.getElementById('outputJawa');
+    if (slider && outJawa) {
+        outJawa.style.fontSize = slider.value + 'rem';
+    }
+}
+
+function ubahJarakBaris() {
+    const slider = document.getElementById('lineHeightSlider');
+    const outJawa = document.getElementById('outputJawa');
+    if (slider && outJawa) {
+        outJawa.style.lineHeight = slider.value;
+    }
+}
+
 /* =========================================================================
  * INTERAKTIVITAS VISUAL: 3D CARD TILT & CANVAS PARTIKEL
  * ========================================================================= */
@@ -230,6 +254,9 @@ function initParticleCanvas() {
 document.addEventListener('DOMContentLoaded', () => {
     const inputElem = document.getElementById('inputLatin');
     const btnClear = document.getElementById('btnClear');
+    const fontSizeSlider = document.getElementById('fontSizeSlider');
+    const lineHeightSlider = document.getElementById('lineHeightSlider');
+    const fontRadioButtons = document.querySelectorAll('input[name="fontOption"]');
 
     if (inputElem) {
         inputElem.addEventListener('input', jalankanTransliterasi);
@@ -242,6 +269,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 jalankanTransliterasi();
                 inputElem.focus();
             }
+        });
+    }
+
+    if (fontSizeSlider) {
+        fontSizeSlider.addEventListener('input', ubahUkuranFont);
+    }
+
+    if (lineHeightSlider) {
+        lineHeightSlider.addEventListener('input', ubahJarakBaris);
+    }
+
+    if (fontRadioButtons) {
+        fontRadioButtons.forEach(radio => {
+            radio.addEventListener('change', (e) => ubahFontRadio(e.target.value));
         });
     }
 
