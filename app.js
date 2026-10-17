@@ -14,19 +14,101 @@ async function muatKamusTaling() {
     }
 }
 
-// Mengoreksi e pepet menjadi e taling berdasarkan kamus tanpa merusak huruf kapital
+// Fungsi pembantu untuk menyesuaikan format huruf kapital pada kata hasil substitusi
+function sesuaikanKapital(original, target) {
+    if (original[0] === original[0].toUpperCase()) {
+        return target.charAt(0).toUpperCase() + target.slice(1);
+    }
+    return target;
+}
+
+// Fungsi pembantu untuk mengurai awalan dan alomorf (peluruhan fonem)
+function dapatkanKandidatKataDasar(kata, prefixes) {
+    let kandidat = [];
+    for (let pref of prefixes) {
+        if (kata.startsWith(pref) && kata.length > pref.length + 2) {
+            let sisa = kata.slice(pref.length);
+
+            // Penanganan alomorf/peluruhan fonem pada meN- dan peN-
+            if (pref === 'meny' || pref === 'peny') {
+                kandidat.push({ prefix: pref, dasar: 's' + sisa });
+            } else if (pref === 'mem' || pref === 'pem') {
+                kandidat.push({ prefix: pref, dasar: sisa });
+                kandidat.push({ prefix: pref.slice(0, -1), dasar: 'p' + sisa });
+            } else if (pref === 'men' || pref === 'pen') {
+                kandidat.push({ prefix: pref, dasar: sisa });
+                kandidat.push({ prefix: pref.slice(0, -1), dasar: 't' + sisa });
+            } else if (pref === 'meng' || pref === 'peng') {
+                kandidat.push({ prefix: pref, dasar: sisa });
+                kandidat.push({ prefix: pref.slice(0, -2), dasar: 'k' + sisa });
+            } else {
+                kandidat.push({ prefix: pref, dasar: sisa });
+            }
+        }
+    }
+    return kandidat;
+}
+
+// Mengoreksi e pepet menjadi e taling berdasarkan kamus & analisis afiksasi (imbuhan) tanpa merusak huruf kapital
 function normalisasiETaling(teks) {
     if (!isKamusLoaded || !teks) return teks;
 
+    const PREFIXES = [
+        'meny', 'meng', 'mem', 'men', 'me',
+        'peny', 'peng', 'pem', 'pen', 'pe',
+        'ber', 'bel', 'ter', 'per', 'di', 'se', 'ke'
+    ];
+
+    const SUFFIXES = [
+        'wati', 'wan', 'man', 'nya', 'kan', 'iah', 'an', 'wi', 'i'
+    ];
+
     return teks.replace(/[a-zA-Z]+/g, function(word) {
         let lowerWord = word.toLowerCase();
+
+        // 1. Cek langsung kata utuh di kamus
         if (KAMUS_TALING[lowerWord]) {
-            let replacement = KAMUS_TALING[lowerWord];
-            if (word[0] === word[0].toUpperCase()) {
-                return replacement.charAt(0).toUpperCase() + replacement.slice(1);
-            }
-            return replacement;
+            return sesuaikanKapital(word, KAMUS_TALING[lowerWord]);
         }
+
+        // 2. Cek pelepasan akhiran
+        let stemSuffix = lowerWord;
+        let matchedSuffix = "";
+        for (let suf of SUFFIXES) {
+            if (stemSuffix.endsWith(suf) && stemSuffix.length > suf.length + 2) {
+                stemSuffix = stemSuffix.slice(0, -suf.length);
+                matchedSuffix = suf;
+                break;
+            }
+        }
+
+        if (KAMUS_TALING[stemSuffix]) {
+            let replacedStem = KAMUS_TALING[stemSuffix];
+            return sesuaikanKapital(word, replacedStem + matchedSuffix);
+        }
+
+        // 3. Cek pelepasan awalan (pada kata dasar atau kata yang sudah dilepas akhirannya)
+        let kandidatStem = dapatkanKandidatKataDasar(stemSuffix, PREFIXES);
+        for (let stem of kandidatStem) {
+            if (KAMUS_TALING[stem.dasar]) {
+                let stemTaling = KAMUS_TALING[stem.dasar];
+                let hasil = stem.prefix + stemTaling + matchedSuffix;
+                return sesuaikanKapital(word, hasil);
+            }
+        }
+
+        // 4. Cek pelepasan awalan langsung (jika tidak ada akhiran terdeteksi)
+        if (matchedSuffix === "") {
+            let kandidatAwal = dapatkanKandidatKataDasar(lowerWord, PREFIXES);
+            for (let stem of kandidatAwal) {
+                if (KAMUS_TALING[stem.dasar]) {
+                    let stemTaling = KAMUS_TALING[stem.dasar];
+                    let hasil = stem.prefix + stemTaling;
+                    return sesuaikanKapital(word, hasil);
+                }
+            }
+        }
+
         return word;
     });
 }
