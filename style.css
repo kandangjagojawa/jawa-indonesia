@@ -111,9 +111,20 @@ h1 {
 }
 
 .subtitle {
-    color: var(--text-secondary);
+    color: #facc15 !important; /* Warna kuning neon/gold */
     font-size: 0.95rem;
     margin-top: 4px;
+}
+
+.subtitle a {
+    color: #facc15 !important;
+    font-weight: 700;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.subtitle a:hover {
+    color: #fde047 !important; /* Warna kuning lebih terang saat di-hover */
 }
 
 /* Accordion Petunjuk */
