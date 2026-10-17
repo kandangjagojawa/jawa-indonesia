@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'Ngayogyan';
+    src: url('ngayogyann.ttf') format('truetype');
+}
+
 :root {
     --bg-gradient: linear-gradient(135deg, #090d16 0%, #111827 50%, #1e1b4b 100%);
     --glass-bg: rgba(255, 255, 255, 0.04);
@@ -287,6 +292,95 @@ textarea#inputLatin:focus {
 .btn-clear:hover {
     background: rgba(239, 68, 68, 0.3);
     color: #f87171;
+}
+
+/* Section Pengaturan Controls (Font, Ukuran, Jarak Baris) */
+.controls-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 180px;
+}
+
+.control-group label {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+
+.radio-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 4px;
+}
+
+.radio-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.88rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    user-select: none;
+}
+
+.radio-option input[type="radio"] {
+    accent-color: var(--accent-glow);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+/* Slider Custom Styling */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-glow);
+    box-shadow: 0 0 10px var(--accent-glow);
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-glow);
+    border: none;
+    box-shadow: 0 0 10px var(--accent-glow);
+    cursor: pointer;
 }
 
 /* Box Output Aksara Jawa */
