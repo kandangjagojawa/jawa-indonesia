@@ -249,7 +249,7 @@ label {
     margin-bottom: 24px;
 }
 
-textarea#inputLatin {
+textarea#inputLatin, textarea#inputTransformLatin {
     width: 100%;
     height: 125px;
     background: rgba(15, 23, 42, 0.6);
@@ -265,7 +265,7 @@ textarea#inputLatin {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-textarea#inputLatin:focus {
+textarea#inputLatin:focus, textarea#inputTransformLatin:focus {
     border-color: var(--accent-glow);
     box-shadow: 0 0 20px rgba(129, 140, 248, 0.25);
     background: rgba(15, 23, 42, 0.8);
@@ -401,7 +401,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* Tombol Salin Modern */
-#btnSalin {
+#btnSalin, #btnSalinTransform {
     background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
     color: white;
     border: none;
@@ -417,13 +417,81 @@ input[type="range"]::-moz-range-thumb {
     transition: all 0.25s ease;
 }
 
-#btnSalin:hover {
+#btnSalin:hover, #btnSalinTransform:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(99, 102, 241, 0.55);
 }
 
-#btnSalin:active {
+#btnSalin:active, #btnSalinTransform:active {
     transform: translateY(0);
+}
+
+/* STYLING KARTU KHUSUS (CARD SECONDARY) & TOMBOL AKSI */
+.card-secondary {
+    margin-top: 28px;
+}
+
+.header-secondary h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 6px;
+}
+
+.subtitle-secondary {
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+.action-btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 14px;
+    margin-bottom: 20px;
+}
+
+.btn-action {
+    background: rgba(30, 41, 59, 0.8);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    flex: 1;
+    min-width: 140px;
+    text-align: center;
+}
+
+.btn-action:hover {
+    background: rgba(129, 140, 248, 0.2);
+    border-color: var(--accent-glow);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(129, 140, 248, 0.25);
+}
+
+.btn-action:active {
+    transform: translateY(0);
+}
+
+.btn-primary-action {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    border: none;
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+}
+
+.btn-primary-action:hover {
+    background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.55);
 }
 
 /* Toast Notification */
@@ -458,4 +526,5 @@ input[type="range"]::-moz-range-thumb {
     }
     h1 { font-size: 1.6rem; }
     .box-aksara { font-size: 1.7rem; line-height: 2.1; }
+    .action-btn-group { flex-direction: column; }
 }
