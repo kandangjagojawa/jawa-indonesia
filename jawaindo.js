@@ -313,9 +313,21 @@ function transliterasiKalimat(teks) {
         let kataKata = processedLine.split(/\s+/);
         let kataJawa = kataKata.map(kata => transliterasiKata(kata));
         
-        let lineJoined = kataJawa.join('');
+        let lineJoined = "";
+        for (let k = 0; k < kataJawa.length; k++) {
+            let currentKata = kataJawa[k];
+            if (k < kataJawa.length - 1) {
+                let nextKata = kataJawa[k + 1];
+                if (/꧀$/.test(currentKata)) {
+                    if (/[꧀ꦿꦾꦽ]/.test(nextKata.substring(0, 3))) {
+                        currentKata += '\u200C';
+                    }
+                }
+            }
+            lineJoined += currentKata;
+        }
+        
         lineJoined = lineJoined.replace(/꧀([\u200C\uE000]*)ꦣ/g, '꧀$1ꦝ');
-        lineJoined = lineJoined.replace(/꧀(?=[^꧀\uA9B4-\uA9BC\s\n\r꧈꧉]{1,4}꧀[^꧀\uA9B4-\uA9BC\s\n\r꧈꧉]{1,4}꧀)/g, '꧀\u200C');
 
         return lineJoined;
     });
