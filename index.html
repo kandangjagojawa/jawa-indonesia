@@ -64,6 +64,33 @@
                 </div>
             </section>
 
+            <!-- Pengaturan Tampilan Output (Font, Ukuran, Jarak Baris) -->
+            <section class="controls-section">
+                <div class="control-group">
+                    <label>Pilihan Font:</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="fontOption" value="Noto Sans Javanese" checked onchange="ubahFontRadio(this.value)">
+                            <span>Default</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="fontOption" value="Ngayogyan" onchange="ubahFontRadio(this.value)">
+                            <span>Ngayogyan</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="fontSizeSlider">Ukuran Font:</label>
+                    <input type="range" id="fontSizeSlider" min="1.2" max="3.5" step="0.1" value="2.1" oninput="ubahUkuranFont()">
+                </div>
+
+                <div class="control-group">
+                    <label for="lineHeightSlider">Jarak Baris:</label>
+                    <input type="range" id="lineHeightSlider" min="1.5" max="3.5" step="0.1" value="2.4" oninput="ubahJarakBaris()">
+                </div>
+            </section>
+
             <!-- Area Output Aksara Jawa -->
             <section class="output-section">
                 <div class="output-header">
