@@ -315,7 +315,7 @@ function transliterasiKalimat(teks) {
         
         let lineJoined = kataJawa.join('');
         lineJoined = lineJoined.replace(/꧀([\u200C\uE000]*)ꦣ/g, '꧀$1ꦝ');
-        lineJoined = lineJoined.replace(/꧀(?=[^꧀\n]{1,4}꧀)/g, '꧀\u200C');
+        lineJoined = lineJoined.replace(/꧀(?=[^꧀\uA9B4-\uA9BC\s\n\r꧈꧉]{1,4}꧀[^꧀\uA9B4-\uA9BC\s\n\r꧈꧉]{1,4}꧀)/g, '꧀\u200C');
 
         return lineJoined;
     });
