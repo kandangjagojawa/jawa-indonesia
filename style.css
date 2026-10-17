@@ -185,6 +185,40 @@ h1 {
     font-family: monospace;
 }
 
+/* Styling & Animasi Link di Petunjuk Penulisan */
+.petunjuk-content a {
+    color: #facc15 !important;
+    font-weight: 700;
+    display: inline-block;
+    text-decoration: underline;
+    animation: yellowPulseGlow 2s infinite ease-in-out;
+    transition: all 0.2s ease;
+}
+
+.petunjuk-content a:hover {
+    color: #ffffff !important;
+    text-shadow: 0 0 15px rgba(250, 204, 21, 1), 0 0 25px rgba(250, 204, 21, 0.8);
+    transform: scale(1.08);
+}
+
+@keyframes yellowPulseGlow {
+    0% {
+        color: #facc15;
+        text-shadow: 0 0 4px rgba(250, 204, 21, 0.4), 0 0 8px rgba(250, 204, 21, 0.2);
+        transform: scale(1);
+    }
+    50% {
+        color: #fef08a;
+        text-shadow: 0 0 12px rgba(250, 204, 21, 0.9), 0 0 22px rgba(250, 204, 21, 0.6), 0 0 30px rgba(250, 204, 21, 0.4);
+        transform: scale(1.04);
+    }
+    100% {
+        color: #facc15;
+        text-shadow: 0 0 4px rgba(250, 204, 21, 0.4), 0 0 8px rgba(250, 204, 21, 0.2);
+        transform: scale(1);
+    }
+}
+
 /* Input & Output Label Bar */
 .section-label-bar, .output-header {
     display: flex;
