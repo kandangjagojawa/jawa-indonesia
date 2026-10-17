@@ -67,7 +67,7 @@ const MAP_SINGKATAN_BIASA_REKAN = {
 
 const MAP_SINGKATAN_MURDA_REKAN = {
     'A':'ꦄ', 'B':'ꦨ', 'C':'ꦕ', 'D':'ꦝ', 'E':'ꦌ', 'F':'ꦥ꦳', 'G':'ꦓ', 'H':'ꦲ',
-    'I':'ꦆ', 'J':'ꦗ', 'K':'ꦑ', 'L':'ꦭ', 'M':'ꦩ', 'N':'ꦟ', 'O':'ꦎ', 'P':'ꦦ',
+    'I':'ꦆ', 'J':'ꦗ', 'K':'ꦑ', 'L':'ꦭ', 'M':'ꦟ', 'N':'ꦟ', 'O':'ꦎ', 'P':'ꦦ',
     'Q':'ꦑ꦳', 'R':'ꦫ', 'S':'ꦯ', 'T':'ꦡ', 'U':'ꦈ', 'V':'ꦮ꦳', 'W':'ꦮ', 'X':'ꦑ꦳',
     'Y':'ꦪ', 'Z':'ꦗ꦳'
 };
@@ -315,6 +315,7 @@ function transliterasiKalimat(teks) {
         
         let lineJoined = kataJawa.join('');
         lineJoined = lineJoined.replace(/꧀([\u200C\uE000]*)ꦣ/g, '꧀$1ꦝ');
+        lineJoined = lineJoined.replace(/꧀(?=[^꧀\n]{1,4}꧀)/g, '꧀\u200C');
 
         return lineJoined;
     });
