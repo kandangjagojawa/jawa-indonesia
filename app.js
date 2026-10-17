@@ -18,7 +18,7 @@ async function muatKamusTaling() {
 function normalisasiETaling(teks) {
     if (!isKamusLoaded || !teks) return teks;
 
-    return teks.replace(/[a-zA-ZA-Z]+/g, function(word) {
+    return teks.replace(/[a-zA-Z]+/g, function(word) {
         let lowerWord = word.toLowerCase();
         if (KAMUS_TALING[lowerWord]) {
             let replacement = KAMUS_TALING[lowerWord];
