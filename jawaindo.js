@@ -1,21 +1,6 @@
 /**
  * JAWAINDO.JS
  * Engine Transliterasi Aksara Jawa Khusus Bahasa Indonesia & Jawa Modern.
- * Hasil penggabungan praktis.js, morfologi.js (fungsi singkatan), & app.js (sintaks perlindungan singkatan).
- * 
- * KETENTUAN LOGIKA & MAPPING:
- * 1. Scripto Continua Murni -> Penulisan menyambung alami antar-kata menggunakan pasangan/tumpuk.
- * 2. Vokal Awal Kata & Hiatus -> Otomatis menggunakan Aksara Swara (ꦄ, ꦆ, ꦈ, ꦌ, ꦎ).
- * 3. Diftong ai & au -> 
- *    - Setelah konsonan: Sandhangan Dirga Mure (ꦻ) & Sandhangan Au (ꦻꦴ).
- *    - Awal kata / tanpa konsonan: Aksara Swara AI (ꦍ) & AU (ꦎꦴ).
- * 4. Panambang Natural -> Meleburkan konsonan akhir kata dasar ke vokal panambang secara alami 
- *    tanpa dobel konsonan dan tanpa Pangkon (mangan-e -> ꦩꦔꦤ꺺).
- * 5. Tembung Dwilingga Mandiri -> Kata ulang ber-tanda hubung diproses terpisah (alun-alun -> ꦄꦭꦸꦤ꧀ꦄꦭꦸꦤ꧀).
- * 6. Ater-ater Anuswara Literal -> Ditulis murni sesuai ketikan tanpa penyisipan Aksara Ha di depan (ngombe -> ꦔꦺꦴꦩ꧀ꦧꦺ).
- * 7. Huruf Kapital & Murda -> Huruf kapital tidak otomatis memicu aksara Murda. Aksara Murda diakses via konsonan ganda (nn, kk, tt, ss, pp, gg, bb, cc, nyy, jj, rr).
- * 8. Penulisan Huruf D Bahasa Indonesia -> Memakai U+A99D (ꦝ). Aksara Da (ꦢ / U+A9A2) diakses via 'dx'.
- * 9. Dukungan Singkatan Otomatis -> Deteksi kata kapital [A-Z]{2,} & sintaks «...», dikonversi ke ejaan bunyi ber-Pada Lingsa (꧈) dan terisolasi dari pangkon kata sebelumnya via \u200C.
  */
 
 const KAMUS_AKSARA = {
@@ -48,7 +33,7 @@ const SWARA_MAP = {
 const ANGKA = ['꧐','꧑','꧒','꧓','꧔','꧕','꧖','꧗','꧘','꧙'];
 
 /* =========================================================================
- * PEMETAAN & FUNGSI SINGKATAN (INTEGRASI MORFOLOGI.JS & APP.JS)
+ * PEMETAAN & FUNGSI SINGKATAN
  * ========================================================================= */
 
 const MAP_SINGKATAN_BIASA = {
@@ -106,7 +91,7 @@ function prosesSingkatan(rawInput, opsi) {
             result += (MAP_SINGKATAN_KAWI[char] || char) + '꧈';
         } else if (opsi === 'bunyi') {
             result += (MAP_SINGKATAN_BUNYI[char] || char) + '꧈';
-        } else { // 'biasa'
+        } else {
             result += (MAP_SINGKATAN_BIASA[char] || char) + '꧈';
         }
     }
@@ -267,40 +252,52 @@ function transliterasiKalimat(teks) {
 
     let baris = teksDiolah.split('\n');
     let hasilBaris = baris.map(line => {
-        // Penanganan sintaks singkatan «...» dan Akronim Kapital [A-Z]{2,}
-        // Disertai \u200C agar terisolasi dari pangkon kata sebelumnya
-        let processedLine = line.replace(/(«[^»]+»|\b[A-Z]{2,}\b)/g, function(match) {
-            let hasilSingkatan = "";
-            if (match.startsWith('«') && match.endsWith('»')) {
-                let inner = match.slice(1, -1);
-                if (inner.includes('|')) {
-                    let parts = inner.split('|');
-                    let rawSingk = parts[0];
-                    let tagInfo = parts[1] || '';
-                    let optNum = tagInfo.split(':')[1] || '1';
-                    let opsi = 'bunyi';
-                    if (optNum === '2') opsi = 'biasa_rekan';
-                    else if (optNum === '3') opsi = 'murda_rekan';
-                    else if (optNum === '4') opsi = 'latin';
-                    if (opsi === 'latin') return rawSingk;
-                    hasilSingkatan = prosesSingkatan(rawSingk, opsi);
-                } else {
-                    hasilSingkatan = inner;
-                }
-            } else if (/^[A-Z]{2,}$/.test(match)) {
-                hasilSingkatan = prosesSingkatan(match, 'bunyi');
+        // Penanganan singkatan dengan otomatisasi Pada Pangkat (꧇) berdasarkan posisi
+        let processedLine = line.replace(/(«[^»]+»|<<[^>]+>>|\b[A-Z]{2,}(?::[1-4])?\b)/g, function(match, offset, string) {
+            let beforeMatch = string.slice(0, offset).trim();
+            // Cek apakah singkatan berada di awal baris/kalimat atau langsung setelah titik (.)
+            let isStartOfSentence = (beforeMatch === "" || beforeMatch.endsWith('.'));
+
+            let rawSingk = "";
+            let optNum = "1";
+
+            if ((match.startsWith('«') && match.endsWith('»')) || (match.startsWith('<<') && match.endsWith('>>'))) {
+                let inner = match.startsWith('«') ? match.slice(1, -1) : match.slice(2, -2);
+                let delim = inner.includes('|') ? '|' : ':';
+                let parts = inner.split(delim);
+                rawSingk = parts[0];
+                let tagInfo = parts[1] || '1';
+                optNum = tagInfo.includes(':') ? tagInfo.split(':')[1] : tagInfo;
+            } else if (match.includes(':')) {
+                let parts = match.split(':');
+                rawSingk = parts[0];
+                optNum = parts[1];
             } else {
-                return match;
+                rawSingk = match;
             }
-            return '\u200C' + hasilSingkatan;
+
+            let opsi = 'bunyi';
+            if (optNum === '2') opsi = 'biasa_rekan';
+            else if (optNum === '3') opsi = 'murda_rekan';
+            else if (optNum === '4') opsi = 'latin';
+
+            if (opsi === 'latin') return rawSingk;
+
+            let hasilSingk = prosesSingkatan(rawSingk, opsi);
+
+            // Jika di awal kalimat / setelah titik: tanpa Pada Pangkat (꧇)
+            // Jika setelah kata pertama/di tengah kalimat: ditambahi Pada Pangkat (꧇)
+            if (isStartOfSentence) {
+                return '\u200C' + hasilSingk;
+            } else {
+                return '꧇\u200C' + hasilSingk;
+            }
         });
 
         let kataKata = processedLine.split(/\s+/);
         let kataJawa = kataKata.map(kata => transliterasiKata(kata));
         
-        // Scripto Continua Murni: kata disambung langsung tanpa penyisipan ZWNJ manual
         let lineJoined = kataJawa.join('');
-        
         lineJoined = lineJoined.replace(/꧀([\u200C\uE000]*)ꦣ/g, '꧀$1ꦝ');
 
         return lineJoined;
@@ -355,7 +352,7 @@ function transliterasiSingleKata(rawLatin) {
         }
     }
 
-    // 2. PANAMBANG NATURAL & ATER-ATER (LEBUR TANPA DOBEL KONSONAN / HAPUS TANDA HUBUNG KATA DASAR)
+    // 2. PANAMBANG NATURAL & ATER-ATER
     latinProcessed = latinProcessed.replace(/([a-zA-ZéèêÉÈÊ]+)-([a-zA-ZéèêÉÈÊ]+)/g, '$1$2');
 
     let res = "";
@@ -409,7 +406,6 @@ function transliterasiSingleKata(rawLatin) {
         let c3_upper = c3_raw.toUpperCase();
         let c2_upper = c2_raw.toUpperCase();
 
-        // Cek Vokal Panjang Swara Mandiri (REE, LEE, AA, II, UU, AI, AU)
         if ((c3_upper === 'REE' || c3_upper === 'LEE') && c3_raw === c3_upper && SWARA_MAP[c3_upper]) {
             c = c3_upper; isSwara = true; jump = 3;
         } 
@@ -426,7 +422,6 @@ function transliterasiSingleKata(rawLatin) {
             c = c1_raw; isSwara = true; jump = 1;
         }
 
-        // 3. VOKAL AWAL KATA & HIATUS (VOKAL MANDIRI/RANGKAP -> OTOMATIS AKSARA SWARA)
         if (c === "" && /[aieéèêou]/i.test(c1)) {
             let sub2V_raw = i+1 < latin.length ? latin.substring(i, i+2) : "";
             let sub2V_upper = sub2V_raw.toUpperCase();
@@ -455,7 +450,6 @@ function transliterasiSingleKata(rawLatin) {
         let lowerLatin = latin.toLowerCase();
         let medial = "";
         
-        // Medial Konsonan (Pengkal / Cakra)
         if (!isSwara && i < lowerLatin.length && (lowerLatin[i] === 'y' || lowerLatin[i] === 'r')) {
             if (i+1 < lowerLatin.length && /[aieéèêou]/.test(lowerLatin[i+1])) {
                 medial = lowerLatin[i]; 
@@ -465,7 +459,6 @@ function transliterasiSingleKata(rawLatin) {
             }
         }
 
-        // 4. PENANGANAN SANDHANGAN VOKAL SETELAH KONSONAN (TERMASUK DIFTONG AI & AU)
         let v = "";
         if (!isSwara && i < lowerLatin.length) {
             let sub3V = lowerLatin.substring(i, i+3);
@@ -498,7 +491,6 @@ function transliterasiSingleKata(rawLatin) {
             }
         }
 
-        // Konsonan Mati (Tanpa Vokal)
         if (v === "" && !isSwara) {
             if (c === 'ng' && !isFirstAksara && canTakeSandhangan) res += 'ꦁ'; 
             else if (c === 'r' && !isFirstAksara && canTakeSandhangan) res += 'ꦂ'; 
@@ -541,8 +533,8 @@ function transliterasiSingleKata(rawLatin) {
                 else if (v === 'u') res += 'ꦸ';
                 else if (v === 'uu') res += 'ꦹ';
                 else if (v === 'aa') res += 'ꦴ';
-                else if (v === 'ai') res += 'ꦻ';   // Sandhangan Dirga Mure
-                else if (v === 'au') res += 'ꦻꦴ';  // Sandhangan Au
+                else if (v === 'ai') res += 'ꦻ';
+                else if (v === 'au') res += 'ꦻꦴ';
                 else if (v === 'ree') res += 'ꦉꦴ';
                 else if (v === 'lee') res += 'ꦋ';
                 else if (v === 'é' || v === 'è') res += 'ꦺ';
