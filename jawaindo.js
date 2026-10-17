@@ -1,6 +1,21 @@
 /**
  * JAWAINDO.JS
  * Engine Transliterasi Aksara Jawa Khusus Bahasa Indonesia & Jawa Modern.
+ * Hasil penggabungan praktis.js, morfologi.js (fungsi singkatan), & app.js (sintaks perlindungan singkatan).
+ * 
+ * KETENTUAN LOGIKA & MAPPING:
+ * 1. Scripto Continua Murni -> Penulisan menyambung alami antar-kata menggunakan pasangan/tumpuk.
+ * 2. Vokal Awal Kata & Hiatus -> Otomatis menggunakan Aksara Swara (ꦄ, ꦆ, ꦈ, ꦌ, ꦎ).
+ * 3. Diftong ai & au -> 
+ *    - Setelah konsonan: Sandhangan Dirga Mure (ꦻ) & Sandhangan Au (ꦻꦴ).
+ *    - Awal kata / tanpa konsonan: Aksara Swara AI (ꦍ) & AU (ꦎꦴ).
+ * 4. Panambang Natural -> Meleburkan konsonan akhir kata dasar ke vokal panambang secara alami 
+ *    tanpa dobel konsonan dan tanpa Pangkon (mangan-e -> ꦩꦔꦤ꺺).
+ * 5. Tembung Dwilingga Mandiri -> Kata ulang ber-tanda hubung diproses terpisah (alun-alun -> ꦄꦭꦸꦤ꧀ꦄꦭꦸꦤ꧀).
+ * 6. Ater-ater Anuswara Literal -> Ditulis murni sesuai ketikan tanpa penyisipan Aksara Ha di depan (ngombe -> ꦔꦺꦴꦩ꧀ꦧꦺ).
+ * 7. Huruf Kapital & Murda -> Huruf kapital tidak otomatis memicu aksara Murda. Aksara Murda diakses via konsonan ganda (nn, kk, tt, ss, pp, gg, bb, cc, nyy, jj, rr).
+ * 8. Penulisan Huruf D Bahasa Indonesia -> Memakai U+A99D (ꦝ). Aksara Da (ꦢ / U+A9A2) diakses via 'dx'.
+ * 9. Dukungan Singkatan Otomatis -> Deteksi kata kapital [A-Z]{2,} & sintaks «...», dikonversi ke ejaan bunyi ber-Pada Lingsa (꧈) dan terisolasi dari pangkon kata sebelumnya via \u200C.
  */
 
 const KAMUS_AKSARA = {
@@ -33,7 +48,7 @@ const SWARA_MAP = {
 const ANGKA = ['꧐','꧑','꧒','꧓','꧔','꧕','꧖','꧗','꧘','꧙'];
 
 /* =========================================================================
- * PEMETAAN & FUNGSI SINGKATAN
+ * PEMETAAN & FUNGSI SINGKATAN (INTEGRASI MORFOLOGI.JS & APP.JS)
  * ========================================================================= */
 
 const MAP_SINGKATAN_BIASA = {
@@ -253,7 +268,8 @@ function transliterasiKalimat(teks) {
     let baris = teksDiolah.split('\n');
     let hasilBaris = baris.map(line => {
         // Penanganan singkatan dengan otomatisasi Pada Pangkat (꧇) berdasarkan posisi
-        let processedLine = line.replace(/(«[^»]+»|<<[^>]+>>|\b[A-Z]{2,}(?::[1-4])?\b)/g, function(match, offset, string) {
+        // Penggunaan (?:...) memastikan offset dan string dikirim dengan urutan parameter callback yang benar
+        let processedLine = line.replace(/(?:«[^»]+»|<<[^>]+>>|\b[A-Z]{2,}(?::[1-4])?\b)/g, function(match, offset, string) {
             let beforeMatch = string.slice(0, offset).trim();
             // Cek apakah singkatan berada di awal baris/kalimat atau langsung setelah titik (.)
             let isStartOfSentence = (beforeMatch === "" || beforeMatch.endsWith('.'));
