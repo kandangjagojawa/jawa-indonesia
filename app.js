@@ -113,7 +113,7 @@ function normalisasiETaling(teks) {
     });
 }
 
-// Proses utama transliterasi
+// Proses utama transliterasi kartu utama
 function jalankanTransliterasi() {
     const inputElem = document.getElementById('inputLatin');
     const outputElem = document.getElementById('outputJawa');
@@ -142,7 +142,7 @@ function jalankanTransliterasi() {
     }
 }
 
-// Fungsi untuk tombol Salin + Toast Notification
+// Fungsi untuk tombol Salin + Toast Notification (Kartu Utama)
 function salinAksara() {
     const outputElem = document.getElementById('outputJawa');
     if (!outputElem || outputElem.innerText === '-') return;
@@ -161,25 +161,116 @@ function salinAksara() {
 // Fungsi Pengaturan Tampilan Output (Font, Ukuran Font, dan Jarak Baris)
 function ubahFontRadio(fontVal) {
     const outJawa = document.getElementById('outputJawa');
-    if (outJawa) {
-        outJawa.style.fontFamily = fontVal === 'Ngayogyan' ? "'Ngayogyan', 'Noto Sans Javanese', serif" : "'Noto Sans Javanese', 'Ngayogyan', serif";
-    }
+    const outTransformJawa = document.getElementById('outputTransformJawa');
+    const fontStyle = fontVal === 'Ngayogyan' ? "'Ngayogyan', 'Noto Sans Javanese', serif" : "'Noto Sans Javanese', 'Ngayogyan', serif";
+    
+    if (outJawa) outJawa.style.fontFamily = fontStyle;
+    if (outTransformJawa) outTransformJawa.style.fontFamily = fontStyle;
 }
 
 function ubahUkuranFont() {
     const slider = document.getElementById('fontSizeSlider');
     const outJawa = document.getElementById('outputJawa');
-    if (slider && outJawa) {
-        outJawa.style.fontSize = slider.value + 'rem';
+    const outTransformJawa = document.getElementById('outputTransformJawa');
+    if (slider) {
+        if (outJawa) outJawa.style.fontSize = slider.value + 'rem';
+        if (outTransformJawa) outTransformJawa.style.fontSize = slider.value + 'rem';
     }
 }
 
 function ubahJarakBaris() {
     const slider = document.getElementById('lineHeightSlider');
     const outJawa = document.getElementById('outputJawa');
-    if (slider && outJawa) {
-        outJawa.style.lineHeight = slider.value;
+    const outTransformJawa = document.getElementById('outputTransformJawa');
+    if (slider) {
+        if (outJawa) outJawa.style.lineHeight = slider.value;
+        if (outTransformJawa) outTransformJawa.style.lineHeight = slider.value;
     }
+}
+
+/* =========================================================================
+ * LOGIKA TRANSFORMATION CARD: VOKAL RANGKAP & AWALAN/KATA DEPAN "DI"
+ * ========================================================================= */
+
+// Skenario 1: Menambahkan panglancar pada vokal rangkap di tengah kata
+function transformasiVokalRangkap(teks) {
+    if (!teks) return "";
+
+    return teks.replace(/[a-zA-zA-Z]+/g, function(word) {
+        // 1. Vokal pertama 'a' / 'A' -> 'ah' + vokal kedua (contoh: lain -> lahin, laut -> lahut)
+        let res = word.replace(/([aA])([aieouéèe'AIEOUÉÈE'])/g, function(match, v1, v2) {
+            return (v1 === 'A' ? 'Ah' : 'ah') + v2;
+        });
+
+        // 2. Vokal pertama 'i', 'é', 'è', "e'" / 'I', 'É', 'È', "E'" -> + 'y' + vokal kedua (contoh: biasa -> biyasa, be'o -> be'yo)
+        res = res.replace(/([iI])([aouéèe'AOUEÉÈE'])/g, '$1y$2');
+        res = res.replace(/([éÈéèE'e'])([aiouAIOU])/g, '$1y$2');
+
+        // 3. Vokal pertama 'u', 'o' / 'U', 'O' -> + 'w' + vokal kedua (contoh: buang -> buwang, koala -> kowala)
+        res = res.replace(/([uUoO])([aieéèe'AIEOÉÈE'])/g, '$1w$2');
+
+        return res;
+    });
+}
+
+// Skenario 2: Mengubah awalan "di-" (menyambung kata lain) menjadi "dxi" agar menghasilkan Aksara Da (ꦢꦶ)
+// Sedangkan kata depan "di" (berdiri sendiri/terpisah) tetap "di" agar menghasilkan Aksara Dha (ꦝꦶ)
+function transformasiDi(teks) {
+    if (!teks) return "";
+
+    return teks.replace(/\b(di|Di|DI)([a-zA-Z]+)/g, function(match, diPart, rest) {
+        if (diPart === 'di') return 'dxi' + rest;
+        if (diPart === 'Di') return 'Dxi' + rest;
+        if (diPart === 'DI') return 'DXI' + rest;
+        return match;
+    });
+}
+
+// Skenario 3: Mengubah vokal rangkap dan awalan "di-" secara bersamaan
+function transformasiKeduanya(teks) {
+    return transformasiDi(transformasiVokalRangkap(teks));
+}
+
+// Proses transliterasi kartu transformasi khusus
+function jalankanTransliterasiTransform() {
+    const inputElem = document.getElementById('inputTransformLatin');
+    const outputElem = document.getElementById('outputTransformJawa');
+    const charCounter = document.getElementById('charCounterTransform');
+    const btnClear = document.getElementById('btnClearTransform');
+
+    if (!inputElem || !outputElem) return;
+
+    let rawInput = inputElem.value;
+
+    if (charCounter) charCounter.innerText = `${rawInput.length} karakter`;
+    if (btnClear) btnClear.style.display = rawInput.length > 0 ? 'flex' : 'none';
+
+    if (!rawInput.trim()) {
+        outputElem.innerText = '-';
+        return;
+    }
+
+    let inputNormalized = normalisasiETaling(rawInput);
+
+    if (typeof transliterasiKalimat === 'function') {
+        outputElem.innerText = transliterasiKalimat(inputNormalized);
+    }
+}
+
+// Salin teks Aksara Jawa dari kartu transformasi khusus
+function salinAksaraTransform() {
+    const outputElem = document.getElementById('outputTransformJawa');
+    if (!outputElem || outputElem.innerText === '-') return;
+
+    navigator.clipboard.writeText(outputElem.innerText).then(() => {
+        const toast = document.getElementById('toast');
+        if (toast) {
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+    });
 }
 
 /* =========================================================================
@@ -258,6 +349,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const lineHeightSlider = document.getElementById('lineHeightSlider');
     const fontRadioButtons = document.querySelectorAll('input[name="fontOption"]');
 
+    // Element Kartu Transformasi Khusus
+    const inputTransform = document.getElementById('inputTransformLatin');
+    const btnClearTransform = document.getElementById('btnClearTransform');
+    const btnUbahVokal = document.getElementById('btnUbahVokal');
+    const btnUbahDi = document.getElementById('btnUbahDi');
+    const btnUbahKeduanya = document.getElementById('btnUbahKeduanya');
+
     if (inputElem) {
         inputElem.addEventListener('input', jalankanTransliterasi);
     }
@@ -286,10 +384,53 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Event Listener Kartu Transformasi Khusus
+    if (inputTransform) {
+        inputTransform.addEventListener('input', jalankanTransliterasiTransform);
+    }
+
+    if (btnClearTransform) {
+        btnClearTransform.addEventListener('click', () => {
+            if (inputTransform) {
+                inputTransform.value = '';
+                jalankanTransliterasiTransform();
+                inputTransform.focus();
+            }
+        });
+    }
+
+    if (btnUbahVokal) {
+        btnUbahVokal.addEventListener('click', () => {
+            if (inputTransform && inputTransform.value.trim()) {
+                inputTransform.value = transformasiVokalRangkap(inputTransform.value);
+                jalankanTransliterasiTransform();
+            }
+        });
+    }
+
+    if (btnUbahDi) {
+        btnUbahDi.addEventListener('click', () => {
+            if (inputTransform && inputTransform.value.trim()) {
+                inputTransform.value = transformasiDi(inputTransform.value);
+                jalankanTransliterasiTransform();
+            }
+        });
+    }
+
+    if (btnUbahKeduanya) {
+        btnUbahKeduanya.addEventListener('click', () => {
+            if (inputTransform && inputTransform.value.trim()) {
+                inputTransform.value = transformasiKeduanya(inputTransform.value);
+                jalankanTransliterasiTransform();
+            }
+        });
+    }
+
     init3DTilt();
     initParticleCanvas();
 
     muatKamusTaling().then(() => {
         jalankanTransliterasi();
+        jalankanTransliterasiTransform();
     });
 });
