@@ -103,6 +103,43 @@
                 <div id="outputJawa" class="box-aksara">-</div>
             </section>
         </div>
+
+        <!-- Kartu Baru: Pengubah Vokal Rangkap & Awalan / Kata Depan 'Di' -->
+        <div class="glass-card card-secondary" id="cardTransform" style="margin-top: 28px;">
+            <header class="app-header header-secondary">
+                <h2>🔄 Ubah Vokal Rangkap & Awalan / Kata Depan "Di"</h2>
+                <p class="subtitle-secondary">Satu klik untuk menyesuaikan tulisan vokal rangkap dengan panglancar dan membedakan bentuk awalan/kata depan "di".</p>
+            </header>
+
+            <section class="input-section">
+                <div class="section-label-bar">
+                    <label for="inputTransformLatin">Teks Latin (Skenario Khusus)</label>
+                    <span id="charCounterTransform" class="stat-badge">0 karakter</span>
+                </div>
+                <div class="textarea-wrapper">
+                    <textarea id="inputTransformLatin" placeholder="Ketik teks Latin di sini... (Contoh: laut biasa dimakan di tempat)" spellcheck="false"></textarea>
+                    <button id="btnClearTransform" class="btn-clear" title="Hapus Teks" style="display: none;">✕</button>
+                </div>
+
+                <!-- Tombol Aksi Skenario Transformasi -->
+                <div class="action-btn-group">
+                    <button id="btnUbahVokal" class="btn-action">Ubah Vokal Rangkap</button>
+                    <button id="btnUbahDi" class="btn-action">Ubah "Di"</button>
+                    <button id="btnUbahKeduanya" class="btn-action btn-primary-action">Ubah Keduanya</button>
+                </div>
+            </section>
+
+            <section class="output-section">
+                <div class="output-header">
+                    <label>Hasil Aksara Jawa (Skenario Khusus)</label>
+                    <button id="btnSalinTransform" onclick="salinAksaraTransform()">
+                        <span class="btn-icon">📋</span>
+                        <span class="btn-text">Salin Aksara</span>
+                    </button>
+                </div>
+                <div id="outputTransformJawa" class="box-aksara">-</div>
+            </section>
+        </div>
     </main>
 
     <!-- Toast Notification -->
